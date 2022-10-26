@@ -1,0 +1,88 @@
+DROP TABLE IF EXISTS users, post, comment, user_status, post_status;
+
+CREATE TABLE IF NOT EXISTS user_status
+(
+    id     serial PRIMARY KEY,
+    status VARCHAR(10) UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS users
+(
+    id         serial PRIMARY KEY,
+    username   VARCHAR(25),
+    password   VARCHAR(20),
+    last_name  VARCHAR(10),
+    first_name VARCHAR(10),
+    email      VARCHAR(25),
+    status     VARCHAR(10),
+    FOREIGN KEY (status) REFERENCES user_status (status)
+);
+
+CREATE TABLE IF NOT EXISTS post_status
+(
+    id     serial PRIMARY KEY,
+    status VARCHAR(10) UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS post
+(
+    id          serial PRIMARY KEY,
+    title       VARCHAR(25),
+    content     VARCHAR(25),
+    create_time VARCHAR(10),
+    update_time VARCHAR(25),
+    user_id     SERIAL,
+    status      VARCHAR(25),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (status) REFERENCES post_status (status)
+);
+
+CREATE TABLE IF NOT EXISTS comment
+(
+    id          serial PRIMARY KEY,
+    content     VARCHAR(25),
+    create_time VARCHAR(25),
+    user_id     serial,
+    post_id     serial,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (post_id) REFERENCES post (id)
+);
+
+INSERT INTO user_status (id, status)
+VALUES (0, 'Active');
+INSERT INTO user_status (id, status)
+VALUES (1, 'Inactive');
+INSERT INTO user_status (id, status)
+VALUES (2, 'Blocked');
+
+SELECT status
+FROM user_status;
+
+UPDATE user_status
+SET status = 'Inactive_'
+WHERE id = 2;
+
+SELECT status
+FROM user_status;
+
+DELETE
+FROM user_status
+WHERE status = 'Blocked';
+
+SELECT status
+FROM user_status;
+
+INSERT INTO users (id, username, password, last_name, first_name, email, status)
+VALUES (1, 'Paul', 'test_password', 'Paul', 'Timus', 'paul@mail.com', 'Active');
+
+INSERT INTO post_status (status)
+VALUES ('Draft');
+INSERT INTO post_status (status)
+VALUES ('Published');
+
+INSERT INTO post (id, title, content, create_time, update_time, user_id, status)
+VALUES (1, 'blog', 'afara_ploua', '2022-10-25', '2022-10-26', 1, 'Published');
+
+INSERT INTO comment (id, content, create_time, user_id, post_id)
+VALUES (1, 'blog', '2022-10-25', 1, 1);
+
